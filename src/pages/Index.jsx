@@ -7,30 +7,37 @@ import { toast } from "sonner";
 const Index = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState({ text: "", images: [] });
+  const [photo, setPhoto] = useState(null);
 
   const handleQueryChange = (e) => {
     setQuery(e.target.value);
   };
 
+  const handlePhotoChange = (e) => {
+    setPhoto(e.target.files[0]);
+  };
+
   const handleSendQuery = async () => {
-    if (!query.trim()) {
-      toast("Please enter a query.");
+    if (!query.trim() && !photo) {
+      toast("Please enter a query or upload a photo.");
       return;
     }
 
     try {
+      const formData = new FormData();
+      formData.append("query", query);
+      if (photo) {
+        formData.append("photo", photo);
+      }
+
       // Call the OpenAI API for photo analysis
       const response = await fetch("https://api.openai.com/v1/engines/davinci-codex/completions", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-        "Authorization": `Bearer sk-proj-qmjriLWJCWuFSfZcGDEcT3BlbkFJz1wavvl0BZ8I8xLy2IBB`,
-        "Assistant-ID": "asst_B1ihVMkzpIpX0VoO7jc1TrYN" // Add the assistant ID here
+          "Authorization": `Bearer sk-proj-qmjriLWJCWuFSfZcGDEcT3BlbkFJz1wavvl0BZ8I8xLy2IBB`,
+          "Assistant-ID": "asst_B1ihVMkzpIpX0VoO7jc1TrYN" // Add the assistant ID here
         },
-        body: JSON.stringify({
-          prompt: query,
-          max_tokens: 100,
-        }),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -38,7 +45,7 @@ const Index = () => {
       }
 
       const data = await response.json();
-      setResults({ text: data.choices[0].text, images: [] }); // Assuming the response contains text analysis
+      setResults({ text: data.choices[0].text, images: data.images || [] }); // Assuming the response contains text and image analysis
     } catch (error) {
       toast.error("Error fetching analysis results.");
       console.error(error);
@@ -75,6 +82,7 @@ const Index = () => {
           placeholder="Type your query here..."
           className="flex-grow"
         />
+        <input type="file" accept="image/*" onChange={handlePhotoChange} />
         <Button onClick={handleSendQuery}>Send</Button>
       </div>
     </div>
