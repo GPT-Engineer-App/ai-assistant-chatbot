@@ -37,14 +37,15 @@ const Index = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch analysis results.");
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch analysis results: ${errorText}`);
       }
 
       const data = await response.json();
       setResults({ text: data.text, images: data.images || [] }); // Assuming the response contains text and image analysis
     } catch (error) {
       toast.error("Error fetching analysis results.");
-      console.error(error);
+      console.error("Error fetching analysis results:", error);
     }
   };
 
