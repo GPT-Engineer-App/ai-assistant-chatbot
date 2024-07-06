@@ -25,6 +25,7 @@ const Index = () => {
         headers: {
           "Content-Type": "application/json",
         "Authorization": `Bearer sk-proj-qmjriLWJCWuFSfZcGDEcT3BlbkFJz1wavvl0BZ8I8xLy2IBB`,
+        "Assistant-ID": "asst_B1ihVMkzpIpX0VoO7jc1TrYN" // Add the assistant ID here
         },
         body: JSON.stringify({
           prompt: query,
