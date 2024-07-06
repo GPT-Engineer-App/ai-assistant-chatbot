@@ -19,13 +19,17 @@ const Index = () => {
     }
 
     try {
-      // Call the OpenAI Playground assistant for photo analysis
-      const response = await fetch("/api/photo-analysis", {
+      // Call the OpenAI API for photo analysis
+      const response = await fetch("https://api.openai.com/v1/engines/davinci-codex/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+        "Authorization": `Bearer sk-proj-qmjriLWJCWuFSfZcGDEcT3BlbkFJz1wavvl0BZ8I8xLy2IBB`,
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({
+          prompt: query,
+          max_tokens: 100,
+        }),
       });
 
       if (!response.ok) {
@@ -33,7 +37,7 @@ const Index = () => {
       }
 
       const data = await response.json();
-      setResults(data);
+      setResults({ text: data.choices[0].text, images: [] }); // Assuming the response contains text analysis
     } catch (error) {
       toast.error("Error fetching analysis results.");
       console.error(error);
