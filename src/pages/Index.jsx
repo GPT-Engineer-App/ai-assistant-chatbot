@@ -31,12 +31,8 @@ const Index = () => {
       }
 
       // Call the OpenAI API for photo analysis
-      const response = await fetch("https://api.openai.com/v1/engines/davinci-codex/completions", {
+      const response = await fetch("/api/photo-analysis", {
         method: "POST",
-        headers: {
-          "Authorization": `Bearer sk-proj-qmjriLWJCWuFSfZcGDEcT3BlbkFJz1wavvl0BZ8I8xLy2IBB`,
-          "Assistant-ID": "asst_B1ihVMkzpIpX0VoO7jc1TrYN" // Add the assistant ID here
-        },
         body: formData,
       });
 
@@ -45,7 +41,7 @@ const Index = () => {
       }
 
       const data = await response.json();
-      setResults({ text: data.choices[0].text, images: data.images || [] }); // Assuming the response contains text and image analysis
+      setResults({ text: data.text, images: data.images || [] }); // Assuming the response contains text and image analysis
     } catch (error) {
       toast.error("Error fetching analysis results.");
       console.error(error);
